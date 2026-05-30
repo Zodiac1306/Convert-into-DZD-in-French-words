@@ -1,0 +1,86 @@
+Function NumberToWordsFR(ByVal n As Double) As String
+    Dim units As Variant
+    Dim tens As Variant
+    Dim result As String
+    Dim remainder As Double
+    
+    units = Array("", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", _
+                  "dix", "onze", "douze", "treize", "quatorze", "quinze", _
+                  "seize", "dix-sept", "dix-huit", "dix-neuf")
+                  
+    tens = Array("", "", "vingt", "trente", "quarante", "cinquante", _
+                 "soixante", "soixante-dix", "quatre-vingt", "quatre-vingt-dix")
+
+    If n = 0 Then
+        NumberToWordsFR = "zéro"
+        Exit Function
+    End If
+
+    If n < 20 Then
+        result = units(n)
+        
+    ElseIf n < 100 Then
+        result = tens(Int(n \ 10))
+        If n Mod 10 > 0 Then
+            result = result & "-" & units(n Mod 10)
+        End If
+        
+    ElseIf n < 1000 Then
+        If Int(n \ 100) = 1 Then
+            result = "cent"
+        Else
+            result = units(Int(n \ 100)) & " cent"
+        End If
+        
+        remainder = n Mod 100
+        If remainder > 0 Then
+            result = result & " " & NumberToWordsFR(remainder)
+        End If
+        
+    ElseIf n < 1000000 Then
+        If Int(n \ 1000) = 1 Then
+            result = "mille"
+        Else
+            result = NumberToWordsFR(Int(n \ 1000)) & " mille"
+        End If
+        
+        remainder = n Mod 1000
+        If remainder > 0 Then
+            result = result & " " & NumberToWordsFR(remainder)
+        End If
+        
+    ElseIf n < 1000000000 Then
+        If Int(n \ 1000000) = 1 Then
+            result = "un million"
+        Else
+            result = NumberToWordsFR(Int(n \ 1000000)) & " millions"
+        End If
+        
+        remainder = n Mod 1000000
+        If remainder > 0 Then
+            result = result & " " & NumberToWordsFR(remainder)
+        End If
+        
+    Else
+        result = "montant trop grand"
+    End If
+    
+    NumberToWordsFR = result
+End Function
+
+Function ConverToTextDZD(ByVal Montant As Double) As String
+    Dim dinars As Long
+    Dim centimes As Integer
+    Dim result As String
+    
+    dinars = Int(Montant)
+    centimes = Round((Montant - dinars) * 100, 0)
+    
+    result = NumberToWordsFR(dinars) & " dinars algériens"
+    
+    If centimes > 0 Then
+        result = result & " et " & NumberToWordsFR(centimes) & " centimes"
+    End If
+    
+    ConverToTextDZD = result
+End Function
